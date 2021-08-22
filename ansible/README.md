@@ -1,2 +1,2 @@
 Simple Ansible ad hoc commands:
-`$ansible [group name] -i [inventory file] -m [module] -a [module options]`
+`$ansible [group name] --inventory [inventory file] --module-name [module] --args [module options]`
