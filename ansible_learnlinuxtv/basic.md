@@ -1,3 +1,11 @@
+### Command Types
+
+`$ ansible`: ad-hoc command
+
+`$ ansible-playbook`: runs predefined commands, will read `ansible.cfg` if exists in current directory
+
+
+
 ### Ad-hoc Commands
 
 baisc command:
@@ -15,8 +23,6 @@ Print out all information on all server:
 Limit to one host:
 
 `$ ansible all -m gather_facts --limit IP_ADDRESS`
-
-
 
 ### Modules & Options
 
@@ -43,8 +49,6 @@ apt Update package repositories:
 * `$ apt dist-upgrade`
 
 ### Options
-
-
 
 `$ ansible HOSTS <command> --become --ask-become-pass`
 
