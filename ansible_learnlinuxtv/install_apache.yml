@@ -4,36 +4,20 @@
   become: true
   tasks:
 
-  - name: update repository index
-    apt:
+  - name: install apache and php packages for DEB servers
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
       update_cache: true
-    when: ansible_distribution in ['Debian', 'Ubuntu']
+    when: ansible_distribution == "Ubuntu"
 
-  - name: install apache2 package
-    apt:
-      name: apache2
+  - name: install apache and php packages for RPM servers
+    package:
+      name:
+        - httpd
+        - php
       state: latest
-    when: ansible_distribution == 'Ubuntu'
-
-  - name: add php support for apache
-    apt:
-      name: libapache2-mod-php
-      state: latest
-    when: ansible_distribution == 'Ubuntu'
-
-  - name: update repository index
-    dnf:
       update_cache: true
-    when: ansible_distribution in ['CentOS', 'Rocky']
-
-  - name: install httpd package
-    dnf:
-      name: httpd
-      state: latest
-    when: ansible_distribution == 'Rocky'
-
-  - name: add php support for apache
-    dnf:
-      name: php
-      state: latest
-    when: ansible_distribution == 'Rocky'
+    when: ansible_distribution in ["centos", "rocky"]

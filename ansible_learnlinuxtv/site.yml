@@ -1,0 +1,63 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:  # run before anything else
+
+    - name: install updates (RPM)
+      dnf:
+        update_only: true
+        update_cache: true
+      when: ansible_distribution == "Rocky"
+
+    - name: install updates (Ubuntu)
+      apt:
+        upgrade: dist
+        update_cache: true
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+    - name: install apache and php packages for DEB servers
+      package:
+        name:
+          - "{{ apache_package }}"
+          - "{{ php_package }}"
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install apache and php packages for RPM servers
+      package:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution in ["centos", "Rocky"]
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+    - name: install mariadb package (RPM)
+      dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "Rocky"
+
+    - name: install mariadb package (DEB)
+      apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+    - name: install samba package
+      package:
+        name: samba
+        state: latest
