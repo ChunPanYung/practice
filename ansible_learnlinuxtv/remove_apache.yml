@@ -4,12 +4,18 @@
   become: true
   tasks:
 
-  - name: remove apache2 package
-    apt:
-      name: apache2
+  - name: remove apache and php packages for DEB servers
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
       state: absent
+    when: ansible_distribution == "Ubuntu"
 
-  - name: remove php support for apache
-    apt:
-      name: libapache2-mod-php
+  - name: remove apache and php packages for RPM servers
+    dnf:
+      name:
+        - httpd
+        - php
       state: absent
+    when: ansible_distribution in ["centos", "Rocky"]
