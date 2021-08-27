@@ -4,6 +4,8 @@
 
 `$ ansible-playbook`: runs predefined commands, will read `ansible.cfg` if exists in current directory
 
+`$ ansible-playbook --list_tags FILE.yml`: list all tags in FILE.yml
+`$ ansible-playbook --tags "TAG1, TAG2" FILE.yml`: run ansible only on task with tags TAG1, or TAG2
 
 
 ### Ad-hoc Commands

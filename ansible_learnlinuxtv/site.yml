@@ -5,12 +5,14 @@
   pre_tasks:  # run before anything else
 
     - name: install updates (RPM)
+      tags: always
       dnf:
         update_only: true
         update_cache: true
       when: ansible_distribution == "Rocky"
 
     - name: install updates (Ubuntu)
+      tags: always
       apt:
         upgrade: dist
         update_cache: true
@@ -22,6 +24,7 @@
   tasks:
 
     - name: install apache and php packages for DEB servers
+      tags: apache, apache2, ubuntu
       package:
         name:
           - "{{ apache_package }}"
@@ -30,6 +33,7 @@
       when: ansible_distribution == "Ubuntu"
 
     - name: install apache and php packages for RPM servers
+      tags: apache, apache2, httpd
       package:
         name:
           - httpd
@@ -42,12 +46,14 @@
   tasks:
 
     - name: install mariadb package (RPM)
+      tags: rocky, db, mariadb
       dnf:
         name: mariadb
         state: latest
       when: ansible_distribution == "Rocky"
 
     - name: install mariadb package (DEB)
+      tags: rocky, db, ubuntu
       apt:
         name: mariadb-server
         state: latest
@@ -58,6 +64,7 @@
   tasks:
 
     - name: install samba package
+      tags: samba
       package:
         name: samba
         state: latest
