@@ -7,7 +7,6 @@
 `$ ansible-playbook --list_tags FILE.yml`: list all tags in FILE.yml
 `$ ansible-playbook --tags "TAG1, TAG2" FILE.yml`: run ansible only on task with tags TAG1, or TAG2
 
-
 ### Ad-hoc Commands
 
 baisc command:
@@ -60,7 +59,7 @@ apt Update package repositories:
 
 ### File Structure
 
-`ansible.cfg`: ansible configuration settings, eivonrment varaibles, command-line options, playbook keywords, and varaibles.
+`ansible.cfg`: ansible configuration settings, environment variables, command-line options, playbook keywords, and varaibles.
 
 * Use `;` for comment
 
