@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache and php packages for DEB servers
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: true
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache and php packages for RPM servers
+    package:
+      name:
+        - httpd
+        - php
+      state: latest
+      update_cache: true
+    when: ansible_distribution in ["centos", "rocky"]

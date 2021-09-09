@@ -1,0 +1,46 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:  # run before anything else
+
+    - name: Update repository index (RPM)
+      tags: always
+      dnf:
+        update_cache: true
+      changed_when: false # not considered change when executing
+      when: ansible_distribution == "Rocky"
+
+    - name: Update repository index (Ubuntu)
+      tags: always
+      apt:
+        update_cache: true
+      changed_when: false # not considered change when executing
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+
+
+- hosts: all
+  become: true
+  roles:
+    - base
+
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
+
+
+- hosts: web_servers
+  become: true
+  roles:
+    - web_servers
+
+- hosts: db_servers
+  become: true
+  roles:
+    - db_servers
+
+- hosts: file_servers
+  become: true
+  roles:
+    - file_servers

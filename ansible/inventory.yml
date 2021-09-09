@@ -1,0 +1,12 @@
+---
+all:
+  hosts:
+  children:
+    web_servers:
+      hosts:
+        rockylinux:
+          ansible_host: 192.168.122.43
+    db_servers:
+      hosts:
+        ubuntu:
+          ansible_host: 192.168.122.188
