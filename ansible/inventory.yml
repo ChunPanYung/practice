@@ -10,8 +10,3 @@ all:
       hosts:
         ubuntu:
           ansible_host: 192.168.122.188
-          apache_package: apache2
-          php_package: libapache2-mod-php
-  vars:
-    ansible_user: user
-    ansible_connection: ssh
