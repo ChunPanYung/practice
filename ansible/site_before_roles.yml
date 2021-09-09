@@ -1,0 +1,132 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:  # run before anything else
+
+    - name: Update repo cache (RPM)
+      tags: always
+      dnf:
+        update_cache: true
+      changed_when: false # not considered change when executing
+      when: ansible_distribution == "Rocky"
+
+    - name: Update repo cache (Ubuntu)
+      tags: always
+      apt:
+        update_cache: true
+      changed_when: false # not considered change when executing
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: add ssh key for simone
+      tags: always
+      authorized_key:
+        user: simone
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0T9nTujAmLQkpiNbJPYXVoZ+LYe99DpdKhqOG02Bxm infinite4ever@solus"
+
+
+- hosts: workstations
+  become: true
+  tasks:
+
+    - name: install unzip
+      package:
+        name: unzip
+
+    - name: install terraform
+      unarchive:
+        src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: true
+        mode: 0755
+        owner: root
+        group: root
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+    - name: install apache and php packages for DEB servers
+      tags: apache, apache2, ubuntu
+      package:
+        name:
+          - "{{ apache_package }}"
+          - "{{ php_package }}"
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install apache and php packages for RPM servers
+      tags: apache, apache2, httpd
+      package:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution in ["centos", "Rocky"]
+
+    - name: start httpd (RockyLinux)
+      tags: apache, rocky, httpd
+      service:
+        name: httpd
+        state: started
+        enabled: true
+      when: ansible_distribution == "Rocky"
+
+    - name: change email address for admin
+      tags: apache, rocky, httpd
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin somebody@somewhere.net
+      when: ansible_distribution == "Rocky"
+      register: httpd
+
+    - name: restart httpd (Rocky)
+      tags: apache, rocky, httpd
+      service:
+        name: httpd
+        state: restarted
+      when: httpd.changed
+
+    - name: copy default html file for site
+      tags: apache, apache2, httpd
+      copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+    - name: install mariadb package (RPM)
+      tags: rocky, db, mariadb
+      dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "Rocky"
+
+    - name: install mariadb package (DEB)
+      tags: rocky, db, ubuntu
+      apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+    - name: install samba package
+      tags: samba
+      package:
+        name: samba
+        state: latest

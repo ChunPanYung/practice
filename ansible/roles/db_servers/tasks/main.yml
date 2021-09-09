@@ -1,0 +1,14 @@
+---
+- name: install mariadb package (RPM)
+  tags: rocky, db, mariadb
+  dnf:
+    name: mariadb
+    state: latest
+  when: ansible_distribution == "Rocky"
+
+- name: install mariadb package (DEB)
+  tags: rocky, db, ubuntu
+  apt:
+    name: mariadb-server
+    state: latest
+  when: ansible_distribution == "Ubuntu"

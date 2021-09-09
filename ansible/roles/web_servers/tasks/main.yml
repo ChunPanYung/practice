@@ -1,0 +1,51 @@
+---
+- name: install apache and php packages for DEB servers
+  tags: apache, apache2, ubuntu
+  package:
+    name:
+      - "{{ apache_package }}"
+      - "{{ php_package }}"
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: install apache and php packages for RPM servers
+  tags: apache, apache2, httpd
+  package:
+    name:
+      - httpd
+      - php
+    state: latest
+  when: ansible_distribution in ["centos", "Rocky"]
+
+- name: start httpd (RockyLinux)
+  tags: apache, rocky, httpd
+  service:
+    name: httpd
+    state: started
+    enabled: true
+  when: ansible_distribution == "Rocky"
+
+- name: change email address for admin
+  tags: apache, rocky, httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin somebody@somewhere.net
+  when: ansible_distribution == "Rocky"
+  register: httpd
+
+- name: restart httpd (Rocky)
+  tags: apache, rocky, httpd
+  service:
+    name: httpd
+    state: restarted
+  when: httpd.changed
+
+- name: copy default html file for site
+  tags: apache, apache2, httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
