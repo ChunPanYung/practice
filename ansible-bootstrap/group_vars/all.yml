@@ -1,0 +1,5 @@
+---
+ansible_connection: ssh
+ssh_users: "infinite4ever user ansible simone"
+ssh_template_file: sshd_config.j2
+ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0T9nTujAmLQkpiNbJPYXVoZ+LYe99DpdKhqOG02Bxm infinite4ever@solus"

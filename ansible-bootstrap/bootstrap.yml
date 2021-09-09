@@ -1,41 +1,32 @@
 ---
-
 - hosts: all
   become: true
   pre_tasks:  # run before anything else
-
-    - name: install updates (RPM)
-      tags: always
-      dnf:
-        update_only: true
-        update_cache: true
-      when: ansible_distribution == "Rocky"
 
     - name: install updates (Ubuntu)
       tags: always
       apt:
         upgrade: dist
         update_cache: true
-      when: ansible_distribution in ["Ubuntu", "Debian"]
-
+        autoremove: true
+      changed_when: false
+      when: ansible_os_family == "Debian"
 
 - hosts: all
   become: true
   tasks:
-
-    - name: create simone user
+    - name: create the simone user
       tags: always
       user:
         name: simone
         groups: root
-
-    - name: add ssh key for simone
+        
+    - name: add ssh key for the simone user
       tags: always
       authorized_key:
         user: simone
-        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0T9nTujAmLQkpiNbJPYXVoZ+LYe99DpdKhqOG02Bxm infinite4ever@solus"
-
-    - name: add sudoers file for simone
+        key: "{{ ssh_key }}"
+    - name: add custom sudoers file
       tags: always
       copy:
         src: sudoer_simone
@@ -43,3 +34,12 @@
         owner: root
         group: root
         mode: 0440
+    - name: add custom sshd_config file
+      tags: ssh
+      template:
+        src: "{{ ssh_template_file }}"
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart_sshd
