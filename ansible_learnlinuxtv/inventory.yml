@@ -1,0 +1,11 @@
+---
+all:
+  hosts:
+    rockylinux:
+      ansible_host: 192.168.122.43
+      ansible_user: user
+      ansible_connection: ssh
+    ubuntu:
+      ansible_host: 192.168.122.188
+      ansible_user: user
+      ansible_connection: ssh
